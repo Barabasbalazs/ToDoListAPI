@@ -1,0 +1,12 @@
+node_modules
+.idea
+.vscode
+.env
+.env.*
+npm-debug.log
+.DS_Store
+build
+
+test-report.xml
+!.idea/runConfigurations
+
