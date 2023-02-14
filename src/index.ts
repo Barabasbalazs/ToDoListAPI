@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import morgan from "morgan";
 import router from "./routes";
+import { connectToDB } from "./db-connection";
 
 const app = express();
 
@@ -10,6 +11,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/", router);
+
+connectToDB();
 
 const port = 8080;
 
