@@ -1,22 +1,22 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface ToDo extends Document {
-  _id: string;
-  id: number;
   title: string;
   text: string;
-  priority: string;
-  createdAt: string;
+  priority: number;
   isResolved: boolean;
 }
 
-const toDoSchema = new Schema({
-  id: { type: Number },
-  title: { type: String },
-  text: { type: String },
-  priority: { type: String },
-  createdAt: { type: String },
-  isResolved: { type: Boolean },
-});
+const toDoSchema = new Schema(
+  {
+    title: { type: String },
+    text: { type: String },
+    priority: { type: Number },
+    isResolved: { type: Boolean },
+  },
+  {
+    timestamps: { createdAt: true, updatedAt: false },
+  }
+);
 
 export default mongoose.model<ToDo>("todos", toDoSchema);

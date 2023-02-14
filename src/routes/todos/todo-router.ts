@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { insertToDoIntoDb } from "./todo-controller";
+import { saveToDo, getToDos } from "./todo-controller";
 
 const todoRouter = Router();
 
-todoRouter.post("/", insertToDoIntoDb);
+todoRouter.post("/", saveToDo);
+todoRouter.get("/", getToDos);
 
 export default todoRouter;
