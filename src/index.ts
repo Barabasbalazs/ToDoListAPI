@@ -4,8 +4,11 @@ import morgan from "morgan";
 import router from "./routes";
 import { config } from "dotenv";
 import { connectToDB } from "./db-connection";
+import { handleError } from "./middleware/error-handler";
 
 config();
+
+connectToDB();
 
 const app = express();
 
@@ -15,11 +18,9 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api", router);
 
-//error middleware here
+app.use(handleError);
 
 const port = process.env.PORT;
-
-connectToDB();
 
 const server = http.createServer(app);
 

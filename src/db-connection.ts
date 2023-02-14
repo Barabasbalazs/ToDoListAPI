@@ -1,14 +1,11 @@
 import mongoose from "mongoose";
-import { throwError } from "./utils/error";
 
 mongoose.set("strictQuery", true);
 
-export const connectToDB = () => {
+export const connectToDB = async () => {
   const mongoDBUri = process.env.MONGODB_URI;
-
-  if (mongoDBUri) {
-    mongoose.connect(mongoDBUri).then();
-  } else {
-    throwError("Unable to connect to MongoDB!");
+  if (!mongoDBUri) {
+    throw new Error("Unable to connect to DB");
   }
+  await mongoose.connect(mongoDBUri).then();
 };
