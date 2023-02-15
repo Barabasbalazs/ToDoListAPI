@@ -33,9 +33,17 @@ export const todoController = {
     }
   },
 
-  getOne: async (req: Request, res: Response<ToDo>, next: NextFunction) => {
+  getOne: async (
+    req: Request<{ _id: string }>,
+    res: Response<ToDo>,
+    next: NextFunction
+  ) => {
     try {
-      const toDo = await todoService.findById(req.params._id);
+      const id = req.params._id;
+      if (!id) {
+        return next(errors.invalidParameter("No id given for ToDo"));
+      }
+      const toDo = await todoService.findById(id);
       if (!toDo) {
         return next(errors.notFound("ToDo not found"));
       }
@@ -45,9 +53,17 @@ export const todoController = {
     }
   },
 
-  delete: async (req: Request, res: Response, next: NextFunction) => {
+  delete: async (
+    req: Request<{ _id: string }>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
-      const deleted = await todoService.remove(req.params._id);
+      const id = req.params._id;
+      if (!id) {
+        return next(errors.invalidParameter("No id given for ToDo"));
+      }
+      const deleted = await todoService.remove(id);
       if (!deleted) {
         next(errors.notFound("ToDo not found"));
       }
