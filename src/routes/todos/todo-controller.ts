@@ -65,8 +65,12 @@ export const todoController = {
     next: NextFunction
   ) => {
     try {
+      const id = req.params._id;
+      if (!id) {
+        return next(errors.invalidParameter("No id given for ToDo"));
+      }
       const toDo = req.body;
-      const updated = await todoService.update(req.params._id, toDo);
+      const updated = await todoService.update(id, toDo);
       if (!updated) {
         return next(errors.notFound("ToDo not found"));
       }
