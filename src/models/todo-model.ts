@@ -1,10 +1,10 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface ToDo extends Document {
-  title: { type: string; required: true };
-  text: { type: string; required: true };
-  priority: { type: number; required: true };
-  isResolved: { type: boolean; required: true };
+  title: string;
+  text: string;
+  priority: number;
+  isResolved: boolean;
 }
 
 const toDoSchema = new Schema(

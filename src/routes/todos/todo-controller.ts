@@ -4,14 +4,14 @@ import { todoService } from "../../services/todo-service";
 import { errors } from "../../utils/errors";
 
 export const todoController = {
-  saveToDo: async (
+  save: async (
     req: Request<{}, {}, ToDo>,
-    res: Response,
+    res: Response<ToDo>,
     next: NextFunction
   ) => {
     const toDo = req.body;
     try {
-      const newToDo = await todoService.insertToDo(toDo);
+      const newToDo = await todoService.insert(toDo);
       if (!newToDo) {
         return next(errors.unknown);
       }
@@ -21,7 +21,7 @@ export const todoController = {
     }
   },
 
-  getAllToDos: async (req: Request, res: Response, next: NextFunction) => {
+  getAll: async (req: Request, res: Response<ToDo[]>, next: NextFunction) => {
     try {
       const toDoList = await todoService.listAll();
       if (!toDoList) {
@@ -33,9 +33,9 @@ export const todoController = {
     }
   },
 
-  getOneToDo: async (req: Request, res: Response, next: NextFunction) => {
+  getOne: async (req: Request, res: Response<ToDo>, next: NextFunction) => {
     try {
-      const toDo = await todoService.findToDoById(req.params._id);
+      const toDo = await todoService.findById(req.params._id);
       if (!toDo) {
         return next(errors.notFound("ToDo not found"));
       }
@@ -45,9 +45,9 @@ export const todoController = {
     }
   },
 
-  deleteToDo: async (req: Request, res: Response, next: NextFunction) => {
+  delete: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const deleted = await todoService.removeToDo(req.params._id);
+      const deleted = await todoService.remove(req.params._id);
       if (!deleted) {
         next(errors.notFound("ToDo not found"));
       }
@@ -59,16 +59,14 @@ export const todoController = {
     }
   },
 
-  updateToDo: async (
+  update: async (
     req: Request<{ _id: string }, {}, Partial<ToDo>>,
-    res: Response,
+    res: Response<ToDo>,
     next: NextFunction
   ) => {
     try {
-      console.log(req.params._id);
       const toDo = req.body;
-      const updated = await todoService.updateToDo(req.params._id, toDo);
-      console.log(updated);
+      const updated = await todoService.update(req.params._id, toDo);
       if (!updated) {
         return next(errors.notFound("ToDo not found"));
       }

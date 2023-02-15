@@ -3,10 +3,10 @@ import { todoController } from "./todo-controller";
 
 const todoRouter = Router();
 
-todoRouter.post("/", todoController.saveToDo);
-todoRouter.get("/", todoController.getAllToDos);
-todoRouter.get("/:_id", todoController.getOneToDo);
-todoRouter.delete("/:_id", todoController.deleteToDo);
-todoRouter.patch("/:_id", todoController.updateToDo);
+todoRouter.post("/", todoController.save);
+todoRouter.get("/", todoController.getAll);
+todoRouter.get("/:_id", todoController.getOne);
+todoRouter.delete("/:_id", todoController.delete);
+todoRouter.patch("/:_id", todoController.update);
 
 export default todoRouter;
