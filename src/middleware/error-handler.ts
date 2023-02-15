@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
+import { Exception } from "../models/exception";
 
 interface GenericError {
   status: number;
@@ -28,6 +29,8 @@ export const handleError = (
     error.status = 422;
     const key = Object.keys(err.errors)[0];
     error.message = err.errors[key].message;
+  } else if (err instanceof Exception) {
+    error = { code: err.code, status: err.status, message: err.message };
   } else if (err instanceof Error) {
     const code = (err as any).code;
     error = {
