@@ -23,22 +23,25 @@ export const todoController = {
   },
 
   getAll: async (
-    req: Request<{}, {}, {}, { sort?: keyof ToDo; order?: OrderType }>,
+    req: Request<
+      {},
+      {},
+      {},
+      { sort?: keyof ToDo; order?: OrderType; search: string }
+    >,
     res: Response<ToDo[]>,
     next: NextFunction
   ) => {
     try {
       const sortBy = req.query.sort;
       const order = req.query.order;
-      const toDoList = await todoService.listAll(sortBy, order);
+      const searchString = req.query.search;
+      const toDoList = await todoService.listAll(sortBy, order, searchString);
       if (!toDoList) {
-        // console.log("Called here");
         return next(errors.unknown);
       }
       res.status(200).json(toDoList);
     } catch (e) {
-      // console.log("Thrown here");
-      // console.log(e);
       return next(errors.unknown);
     }
   },

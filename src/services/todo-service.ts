@@ -8,8 +8,17 @@ export const todoService = {
 
   listAll: async (
     sortBy?: keyof ToDo,
-    order?: OrderType
+    order?: OrderType,
+    searchString?: string
   ): Promise<ToDo[] | void> => {
+    if (searchString) {
+      return await model.find({
+        $or: [
+          { title: { $regex: searchString } },
+          { text: { $regex: searchString } },
+        ],
+      });
+    }
     if (sortBy && order) {
       return await model.find().sort({ [sortBy]: order });
     }
