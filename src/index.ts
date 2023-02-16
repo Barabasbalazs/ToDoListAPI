@@ -2,6 +2,13 @@ import express from "express";
 import http from "http";
 import morgan from "morgan";
 import router from "./routes";
+import { config } from "dotenv";
+import { connectToDB } from "./db-connection";
+import { handleError } from "./middleware/error-handler";
+
+config();
+
+connectToDB();
 
 const app = express();
 
@@ -9,9 +16,11 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/", router);
+app.use("/api", router);
 
-const port = 8080;
+app.use(handleError);
+
+const port = process.env.PORT;
 
 const server = http.createServer(app);
 
