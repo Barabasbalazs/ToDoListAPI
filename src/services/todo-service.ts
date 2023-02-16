@@ -11,18 +11,23 @@ export const todoService = {
     order?: OrderType,
     searchString?: string
   ): Promise<ToDo[] | void> => {
+    const stages = [];
     if (searchString) {
-      return await model.find({
-        $or: [
-          { title: { $regex: searchString } },
-          { text: { $regex: searchString } },
-        ],
+      stages.unshift({
+        $match: {
+          $or: [
+            { title: { $regex: searchString } },
+            { text: { $regex: searchString } },
+          ],
+        },
       });
+    } else {
+      stages.unshift({ $match: { title: { $regex: "/*" } } });
     }
     if (sortBy && order) {
-      return await model.find().sort({ [sortBy]: order });
+      return await model.aggregate(stages).sort({ [sortBy]: order });
     }
-    return await model.find();
+    return await model.aggregate(stages);
   },
 
   findById: async (id: string): Promise<ToDo | null> => {
