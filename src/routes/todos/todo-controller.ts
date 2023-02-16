@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { ToDo } from "../../models/todo-model";
+import todoModel, { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
+import { OrderType } from "../../types/order-type";
 import { errors } from "../../utils/errors";
 
 export const todoController = {
@@ -21,25 +22,35 @@ export const todoController = {
     }
   },
 
-  getAll: async (req: Request, res: Response<ToDo[]>, next: NextFunction) => {
+  getAll: async (
+    req: Request<{}, {}, {}, { sort?: keyof ToDo; order?: OrderType }>,
+    res: Response<ToDo[]>,
+    next: NextFunction
+  ) => {
     try {
-      const toDoList = await todoService.listAll();
+      const sortBy = req.query.sort;
+      const order = req.query.order;
+      const toDoList = await todoService.listAll(sortBy, order);
       if (!toDoList) {
+        // console.log("Called here");
         return next(errors.unknown);
       }
       res.status(200).json(toDoList);
     } catch (e) {
+      // console.log("Thrown here");
+      // console.log(e);
       return next(errors.unknown);
     }
   },
 
   getOne: async (
-    req: Request<{ _id: string }>,
+    req: Request<{ id: string }>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
+    console.log("One");
     try {
-      const id = req.params._id;
+      const id = req.params.id;
       if (!id) {
         return next(errors.invalidParameter("No id given for ToDo"));
       }
@@ -54,12 +65,12 @@ export const todoController = {
   },
 
   delete: async (
-    req: Request<{ _id: string }>,
+    req: Request<{ id: string }>,
     res: Response,
     next: NextFunction
   ) => {
     try {
-      const id = req.params._id;
+      const id = req.params.id;
       if (!id) {
         return next(errors.invalidParameter("No id given for ToDo"));
       }
@@ -76,12 +87,12 @@ export const todoController = {
   },
 
   update: async (
-    req: Request<{ _id: string }, {}, Partial<ToDo>>,
+    req: Request<{ id: string }, {}, Partial<ToDo>>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
     try {
-      const id = req.params._id;
+      const id = req.params.id;
       if (!id) {
         return next(errors.invalidParameter("No id given for ToDo"));
       }

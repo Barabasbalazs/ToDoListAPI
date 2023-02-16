@@ -1,11 +1,18 @@
 import model, { ToDo } from "../models/todo-model";
+import { OrderType } from "../types/order-type";
 
 export const todoService = {
   insert: async (toDo: ToDo): Promise<ToDo | void> => {
     return await model.create(toDo);
   },
 
-  listAll: async (): Promise<ToDo[] | void> => {
+  listAll: async (
+    sortBy?: keyof ToDo,
+    order?: OrderType
+  ): Promise<ToDo[] | void> => {
+    if (sortBy && order) {
+      return await model.find().sort({ [sortBy]: order });
+    }
     return await model.find();
   },
 
