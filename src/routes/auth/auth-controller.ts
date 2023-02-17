@@ -4,6 +4,7 @@ import { errors } from "../../utils/errors";
 import { User } from "../../models/user-model";
 import { BodyRequest } from "../../types/request-types";
 import { jwtService } from "../../services/jwt-service";
+import bcrypt from "bcrypt";
 
 interface AuthResponse {
   user: User;
@@ -11,24 +12,58 @@ interface AuthResponse {
 }
 
 export const authController = {
-  login: async (req: Request, res: Response, next: NextFunction) => {},
+  login: async (
+    req: BodyRequest<User>,
+    res: Response<AuthResponse>,
+    next: NextFunction
+  ) => {
+    try {
+      const user = req.body;
+      const storedUser = await authService.findUser(user.email);
+      if (!storedUser) {
+        return next(errors.unsuccesfullLogin("incorrect email"));
+      }
+      const isPasswordMatching = await bcrypt.compare(
+        user.password,
+        storedUser.password
+      );
+      if (!isPasswordMatching) {
+        return next(errors.unsuccesfullLogin("incorrect password"));
+      }
+      const authToken = jwtService.createToken(storedUser.id);
+      const authResponse = {
+        user: storedUser,
+        authToken: authToken,
+      };
+      res.status(200).json(authResponse);
+    } catch (e) {
+      return next(errors.unknown);
+    }
+  },
   logout: async (req: Request, res: Response, next: NextFunction) => {},
   register: async (
     req: BodyRequest<User>,
     res: Response<AuthResponse>,
     next: NextFunction
   ) => {
-    const user = req.body;
-    const foundUser = await authService.findUser(user.email);
-    if (foundUser) {
-      return next(errors.unsuccesfullLogin("email already taken"));
+    try {
+      const user = req.body;
+      const foundUser = await authService.findUser(user.email);
+      if (foundUser) {
+        return next(errors.unsuccesfullLogin("email already taken"));
+      }
+      const newUser = await authService.register(user);
+      if (!newUser) {
+        return next(errors.unknown);
+      }
+      const authToken = jwtService.createToken(newUser.id);
+      const authResponse = {
+        user: newUser,
+        authToken: authToken,
+      };
+      res.status(201).json(authResponse);
+    } catch (e) {
+      return next(errors.unknown);
     }
-    const newUser = await authService.register(user);
-    const authToken = jwtService.createToken(newUser.id);
-    const authResponse = {
-      user: newUser,
-      authToken: authToken,
-    };
-    res.status(201).json(authResponse);
   },
 };

@@ -16,8 +16,8 @@ export const todoController = {
     res: Response<ToDo>,
     next: NextFunction
   ) => {
-    const toDo = req.body;
     try {
+      const toDo = req.body;
       const newToDo = await todoService.insert(toDo);
       if (!newToDo) {
         return next(errors.unknown);
@@ -45,7 +45,6 @@ export const todoController = {
       }
       res.status(200).json(toDoList);
     } catch (e) {
-      console.log(e);
       return next(errors.unknown);
     }
   },

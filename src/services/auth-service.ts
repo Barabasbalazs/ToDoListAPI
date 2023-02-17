@@ -5,7 +5,7 @@ export const authService = {
   findUser: async (email: string): Promise<User | null> => {
     return await userModel.findOne({ email });
   },
-  register: async (user: User): Promise<User> => {
+  register: async (user: User): Promise<User | void> => {
     const saltRounds: number = parseInt(process.env.SALT_ROUNDS || "1");
     const salt = await bcrypt.genSalt(saltRounds);
     user.password = await bcrypt.hash(user.password, salt);
