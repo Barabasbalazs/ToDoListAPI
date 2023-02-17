@@ -1,12 +1,18 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
 import { OrderType } from "../../types/order-type";
 import { errors } from "../../utils/errors";
+import {
+  BodyRequest,
+  QueryRequest,
+  ParamBodyRequest,
+  ParamRequest,
+} from "../../types/request-types";
 
 export const todoController = {
   save: async (
-    req: Request<{}, {}, ToDo>,
+    req: BodyRequest<ToDo>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
@@ -23,12 +29,11 @@ export const todoController = {
   },
 
   getAll: async (
-    req: Request<
-      {},
-      {},
-      {},
-      { sort?: keyof ToDo; order?: OrderType; search?: string }
-    >,
+    req: QueryRequest<{
+      sort?: keyof ToDo;
+      order?: OrderType;
+      search?: string;
+    }>,
     res: Response<ToDo[]>,
     next: NextFunction
   ) => {
@@ -46,15 +51,12 @@ export const todoController = {
   },
 
   getOne: async (
-    req: Request<{ id: string }>,
+    req: ParamRequest<{ id: string }>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
     try {
       const id = req.params.id;
-      if (!id) {
-        return next(errors.invalidParameter("No id given for ToDo"));
-      }
       const toDo = await todoService.findById(id);
       if (!toDo) {
         return next(errors.notFound("ToDo not found"));
@@ -66,15 +68,12 @@ export const todoController = {
   },
 
   delete: async (
-    req: Request<{ id: string }>,
+    req: ParamRequest<{ id: string }>,
     res: Response,
     next: NextFunction
   ) => {
     try {
       const id = req.params.id;
-      if (!id) {
-        return next(errors.invalidParameter("No id given for ToDo"));
-      }
       const deleted = await todoService.remove(id);
       if (!deleted) {
         next(errors.notFound("ToDo not found"));
@@ -87,16 +86,13 @@ export const todoController = {
     }
   },
 
-  update: async (
-    req: Request<{ id: string }, {}, Partial<ToDo>>,
+  updateOne: async (
+    req: ParamBodyRequest<Partial<ToDo>, { id: string }>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
     try {
       const id = req.params.id;
-      if (!id) {
-        return next(errors.invalidParameter("No id given for ToDo"));
-      }
       const toDo = req.body;
       const updated = await todoService.update(id, toDo);
       if (!updated) {
