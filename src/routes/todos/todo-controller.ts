@@ -1,28 +1,14 @@
-import { Request, Response, NextFunction, query } from "express";
+import { Response, NextFunction } from "express";
 import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
 import { OrderType } from "../../types/order-type";
 import { errors } from "../../utils/errors";
-
-interface QueryRequest<T extends { [queryParam: string]: string }>
-  extends Request {
-  query: T;
-}
-interface BodyRequest<T> extends Request {
-  body: T;
-}
-interface ParamRequest<
-  T extends { [param: string]: string; [captureGroup: number]: string }
-> extends Request {
-  params: T;
-}
-interface ParamBodyRequest<
-  U,
-  T extends { [param: string]: string; [captureGroup: number]: string }
-> extends Request {
-  params: T;
-  body: U;
-}
+import {
+  BodyRequest,
+  QueryRequest,
+  ParamBodyRequest,
+  ParamRequest,
+} from "../../types/request-types";
 
 export const todoController = {
   save: async (
