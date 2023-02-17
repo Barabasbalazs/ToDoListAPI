@@ -1,12 +1,44 @@
+import { PipelineStage } from "mongoose";
 import model, { ToDo } from "../models/todo-model";
+import { OrderType } from "../types/order-type";
 
 export const todoService = {
   insert: async (toDo: ToDo): Promise<ToDo | void> => {
     return await model.create(toDo);
   },
 
-  listAll: async (): Promise<ToDo[] | void> => {
-    return await model.find();
+  listAll: async (
+    sortBy?: keyof ToDo,
+    order?: OrderType,
+    searchString?: string
+  ): Promise<ToDo[] | void> => {
+    const stages: PipelineStage[] = [];
+    const orderNumber = order === "asc" ? 1 : -1;
+    const match = {
+      ...(searchString && {
+        $or: [
+          { title: { $regex: searchString, $options: "i" } },
+          { text: { $regex: searchString, $options: "i" } },
+        ],
+      }),
+    };
+
+    stages.push({ $match: match });
+
+    if (sortBy && orderNumber) {
+      stages.push({
+        $sort: {
+          [sortBy]: orderNumber,
+        },
+      });
+    } else {
+      stages.push({
+        $sort: {
+          priority: -1,
+        },
+      });
+    }
+    return await model.aggregate(stages);
   },
 
   findById: async (id: string): Promise<ToDo | null> => {
