@@ -3,6 +3,17 @@ import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
 import { OrderType } from "../../types/order-type";
 import { errors } from "../../utils/errors";
+import { Query, ParamsDictionary } from "express-serve-static-core";
+
+interface ToDoQuery extends Query {
+  sort?: keyof ToDo;
+  order?: OrderType;
+  search?: string;
+}
+
+interface ToDoParams extends ParamsDictionary {
+  id: string;
+}
 
 export const todoController = {
   save: async (
@@ -23,12 +34,7 @@ export const todoController = {
   },
 
   getAll: async (
-    req: Request<
-      {},
-      {},
-      {},
-      { sort?: keyof ToDo; order?: OrderType; search?: string }
-    >,
+    req: Request<{}, {}, {}, ToDoQuery>,
     res: Response<ToDo[]>,
     next: NextFunction
   ) => {
@@ -46,7 +52,7 @@ export const todoController = {
   },
 
   getOne: async (
-    req: Request<{ id: string }>,
+    req: Request<ToDoParams>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
@@ -66,7 +72,7 @@ export const todoController = {
   },
 
   delete: async (
-    req: Request<{ id: string }>,
+    req: Request<ToDoParams>,
     res: Response,
     next: NextFunction
   ) => {
@@ -88,7 +94,7 @@ export const todoController = {
   },
 
   update: async (
-    req: Request<{ id: string }, {}, Partial<ToDo>>,
+    req: Request<ToDoParams, {}, Partial<ToDo>>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
