@@ -57,9 +57,6 @@ export const todoController = {
   ) => {
     try {
       const id = req.params.id;
-      if (!id) {
-        return next(errors.invalidParameter("No id given for ToDo"));
-      }
       const toDo = await todoService.findById(id);
       if (!toDo) {
         return next(errors.notFound("ToDo not found"));
@@ -77,9 +74,6 @@ export const todoController = {
   ) => {
     try {
       const id = req.params.id;
-      if (!id) {
-        return next(errors.invalidParameter("No id given for ToDo"));
-      }
       const deleted = await todoService.remove(id);
       if (!deleted) {
         next(errors.notFound("ToDo not found"));
@@ -92,16 +86,13 @@ export const todoController = {
     }
   },
 
-  update: async (
+  updateOne: async (
     req: ParamBodyRequest<Partial<ToDo>, { id: string }>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
     try {
       const id = req.params.id;
-      if (!id) {
-        return next(errors.invalidParameter("No id given for ToDo"));
-      }
       const toDo = req.body;
       const updated = await todoService.update(id, toDo);
       if (!updated) {

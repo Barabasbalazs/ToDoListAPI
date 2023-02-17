@@ -20,7 +20,7 @@ app.use("/api", router);
 
 app.use(handleError);
 
-const port = process.env.PORT ? process.env.PORT : 8080;
+const port = process.env.PORT || 8080;
 
 const server = http.createServer(app);
 
