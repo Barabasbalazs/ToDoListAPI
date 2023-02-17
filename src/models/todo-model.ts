@@ -5,7 +5,7 @@ export interface ToDo extends Document {
   title: string;
   text: string;
   priority: number;
-  isResolved: boolean;
+  isResolved: { type: boolean; default: false };
 }
 
 const toDoSchema = new Schema(
@@ -14,7 +14,7 @@ const toDoSchema = new Schema(
     title: { type: String },
     text: { type: String },
     priority: { type: Number },
-    isResolved: { type: Boolean },
+    isResolved: { type: Boolean, default: false },
   },
   {
     timestamps: { createdAt: true, updatedAt: false },

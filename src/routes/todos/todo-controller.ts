@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import todoModel, { ToDo } from "../../models/todo-model";
+import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
 import { OrderType } from "../../types/order-type";
 import { errors } from "../../utils/errors";
@@ -27,21 +27,20 @@ export const todoController = {
       {},
       {},
       {},
-      { sort?: keyof ToDo; order?: OrderType; search: string }
+      { sort?: keyof ToDo; order?: OrderType; search?: string }
     >,
     res: Response<ToDo[]>,
     next: NextFunction
   ) => {
     try {
-      const sortBy = req.query.sort;
-      const order = req.query.order;
-      const searchString = req.query.search;
-      const toDoList = await todoService.listAll(sortBy, order, searchString);
+      const { sort, order, search } = req.query;
+      const toDoList = await todoService.listAll(sort, order, search);
       if (!toDoList) {
         return next(errors.unknown);
       }
       res.status(200).json(toDoList);
     } catch (e) {
+      console.log(e);
       return next(errors.unknown);
     }
   },
@@ -51,7 +50,6 @@ export const todoController = {
     res: Response<ToDo>,
     next: NextFunction
   ) => {
-    console.log("One");
     try {
       const id = req.params.id;
       if (!id) {

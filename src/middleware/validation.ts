@@ -1,53 +1,37 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  fullToDoValidator,
-  partialToDoValidator,
-  isValueOfType,
-} from "../models/validators";
+import { ErrorReport } from "joi";
+import { queryDTO } from "../routes/todos/dto/queryparameters.dto";
 import { errors } from "../utils/errors";
+import Joi from "joi";
 
-const sortByProperties = ["createdAt", "priority", "title", "text"];
-const orderProperties = ["asc", "desc"];
-
-export const validateToDo = {
-  fullValidation: async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      await fullToDoValidator.validateAsync(req.body);
-      return next();
-    } catch (e) {
-      return next(errors.invalidParameter("Invalid ToDo"));
-    }
-  },
-  partialValidation: async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
-    try {
-      await partialToDoValidator.validateAsync(req.body);
-      return next();
-    } catch (e) {
-      return next(errors.invalidParameter("Invalid ToDo"));
-    }
+export const validators = {
+  toDoValidation: (dto: Joi.ObjectSchema<any>) => {
+    return async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        await dto.validateAsync(req.body);
+        return next();
+      } catch (e) {
+        const errorReport = e as ErrorReport;
+        return next(errors.invalidParameter(`: ${errorReport.message}`));
+      }
+    };
   },
   queryValidation: async (
     req: Request<{}, {}, {}, { sort?: any; order?: any }>,
     res: Response,
     next: NextFunction
   ) => {
-    const sortBy = req.query.sort;
-    const order = req.query.order;
-    if (!sortBy && !order) {
-      return next();
-    }
-    if (sortBy && order) {
-      if (
-        isValueOfType(sortBy, sortByProperties) &&
-        isValueOfType(order, orderProperties)
-      ) {
+    try {
+      const sortBy = req.query.sort;
+      const order = req.query.order;
+      if (!sortBy && !order) {
         return next();
       }
+      await queryDTO.validateAsync(req.query);
+      return next();
+    } catch (e) {
+      const errorReport = e as ErrorReport;
+      return next(errors.invalidParameter(`: ${errorReport.message}`));
     }
-    return next(errors.invalidParameter("Invalid parameters"));
   },
 };
