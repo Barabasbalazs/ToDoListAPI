@@ -1,23 +1,32 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, query } from "express";
 import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
 import { OrderType } from "../../types/order-type";
 import { errors } from "../../utils/errors";
-import { Query, ParamsDictionary } from "express-serve-static-core";
 
-interface ToDoQuery extends Query {
-  sort?: keyof ToDo;
-  order?: OrderType;
-  search?: string;
+interface QueryRequest<T extends { [queryParam: string]: string }>
+  extends Request {
+  query: T;
 }
-
-interface ToDoParams extends ParamsDictionary {
-  id: string;
+interface BodyRequest<T> extends Request {
+  body: T;
+}
+interface ParamRequest<
+  T extends { [param: string]: string; [captureGroup: number]: string }
+> extends Request {
+  params: T;
+}
+interface ParamBodyRequest<
+  U,
+  T extends { [param: string]: string; [captureGroup: number]: string }
+> extends Request {
+  params: T;
+  body: U;
 }
 
 export const todoController = {
   save: async (
-    req: Request<{}, {}, ToDo>,
+    req: BodyRequest<ToDo>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
@@ -34,7 +43,11 @@ export const todoController = {
   },
 
   getAll: async (
-    req: Request<{}, {}, {}, ToDoQuery>,
+    req: QueryRequest<{
+      sort?: keyof ToDo;
+      order?: OrderType;
+      search?: string;
+    }>,
     res: Response<ToDo[]>,
     next: NextFunction
   ) => {
@@ -52,7 +65,7 @@ export const todoController = {
   },
 
   getOne: async (
-    req: Request<ToDoParams>,
+    req: ParamRequest<{ id: string }>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
@@ -72,7 +85,7 @@ export const todoController = {
   },
 
   delete: async (
-    req: Request<ToDoParams>,
+    req: ParamRequest<{ id: string }>,
     res: Response,
     next: NextFunction
   ) => {
@@ -94,7 +107,7 @@ export const todoController = {
   },
 
   update: async (
-    req: Request<ToDoParams, {}, Partial<ToDo>>,
+    req: ParamBodyRequest<Partial<ToDo>, { id: string }>,
     res: Response<ToDo>,
     next: NextFunction
   ) => {
