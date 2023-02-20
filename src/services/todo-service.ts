@@ -1,6 +1,6 @@
 import { PipelineStage } from "mongoose";
 import model, { ToDo } from "../models/todo-model";
-import { OrderType } from "../types/order-type";
+import { OrderType } from "../@types/order-type";
 
 export const todoService = {
   insert: async (toDo: ToDo): Promise<ToDo | void> => {

@@ -3,7 +3,7 @@ import { ErrorReport } from "joi";
 import { queryDTO } from "../routes/todos/dto/queryparameters.dto";
 import { errors } from "../utils/errors";
 import Joi from "joi";
-import { QueryRequest } from "../types/request-types";
+import { QueryRequest } from "../@types/request-types";
 
 export const validators = {
   bodyValidation: (dto: Joi.ObjectSchema<any>) => {

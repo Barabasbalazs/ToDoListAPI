@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npx nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "lint": "./node_modules/.bin/ESLint -c .eslintrc.js",
+    "dev": "tsc-watch --noClear -p ./tsconfig.json --onSuccess \"node ./build/index.js\"",
+    "pretty-quick": "pretty-quick --pattern \"src/**/*\"",
+    "format": "prettier --write ./src"
   },
   "repository": {
     "type": "git",
@@ -26,9 +29,9 @@
     "@types/node": "^18.13.0",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
+    "copyfiles": "^2.4.1",
     "eslint": "^8.34.0",
-    "nodemon": "^2.0.20",
-    "ts-node": "^10.9.1",
+    "tsc-watch": "^6.0.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {

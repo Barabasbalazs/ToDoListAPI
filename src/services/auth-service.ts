@@ -2,7 +2,10 @@ import userModel, { User } from "../models/user-model";
 import bcrypt from "bcrypt";
 
 export const authService = {
-  findUser: async (email: string): Promise<User | null> => {
+  findById: async (id: string): Promise<User | null> => {
+    return await userModel.findOne({ _id: id });
+  },
+  findByEmail: async (email: string): Promise<User | null> => {
     return await userModel.findOne({ email });
   },
   register: async (user: User): Promise<User | void> => {

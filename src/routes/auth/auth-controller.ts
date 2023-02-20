@@ -2,7 +2,7 @@ import { NextFunction, Response, Request } from "express";
 import { authService } from "../../services/auth-service";
 import { errors } from "../../utils/errors";
 import { User } from "../../models/user-model";
-import { BodyRequest } from "../../types/request-types";
+import { BodyRequest } from "../../@types/request-types";
 import { jwtService } from "../../services/jwt-service";
 import bcrypt from "bcrypt";
 
@@ -19,7 +19,7 @@ export const authController = {
   ) => {
     try {
       const user = req.body;
-      const storedUser = await authService.findUser(user.email);
+      const storedUser = await authService.findByEmail(user.email);
       if (!storedUser) {
         return next(errors.unsuccesfullLogin("incorrect email"));
       }
@@ -48,7 +48,7 @@ export const authController = {
   ) => {
     try {
       const user = req.body;
-      const foundUser = await authService.findUser(user.email);
+      const foundUser = await authService.findByEmail(user.email);
       if (foundUser) {
         return next(errors.unsuccesfullLogin("email already taken"));
       }

@@ -1,14 +1,14 @@
 import { Response, NextFunction } from "express";
 import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
-import { OrderType } from "../../types/order-type";
+import { OrderType } from "../../@types/order-type";
 import { errors } from "../../utils/errors";
 import {
   BodyRequest,
   QueryRequest,
   ParamBodyRequest,
   ParamRequest,
-} from "../../types/request-types";
+} from "../../@types/request-types";
 
 export const todoController = {
   save: async (
