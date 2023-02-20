@@ -18,6 +18,7 @@ export const todoController = {
   ) => {
     try {
       const toDo = req.body;
+      toDo.userId = req.user?.id;
       const newToDo = await todoService.insert(toDo);
       if (!newToDo) {
         return next(errors.unknown);
@@ -39,7 +40,12 @@ export const todoController = {
   ) => {
     try {
       const { sort, order, search } = req.query;
-      const toDoList = await todoService.listAll(sort, order, search);
+      const toDoList = await todoService.listAll(
+        req.user?.id,
+        sort,
+        order,
+        search
+      );
       if (!toDoList) {
         return next(errors.unknown);
       }

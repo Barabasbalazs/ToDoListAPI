@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { errors } from "../utils/errors";
 import { authService } from "../services/auth-service";
+import { jwtService } from "../services/jwt-service";
 
 export const authorization = {
   authenticate: async (req: Request, res: Response, next: NextFunction) => {
@@ -9,6 +10,13 @@ export const authorization = {
       return next(errors.unauthorized);
     }
     const bearerToken = req.headers.authorization.split(" ")[1];
+
+    const jwtToken = await jwtService.checkToken(bearerToken);
+
+    if (!jwtToken) {
+      return next(errors.unauthorized);
+    }
+
     const secret = process.env.SECRET || "123456789";
     const result = jwt.verify(bearerToken, secret) as string;
     const user = await authService.findById(result);

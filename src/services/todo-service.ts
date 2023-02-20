@@ -1,6 +1,7 @@
 import { PipelineStage } from "mongoose";
 import model, { ToDo } from "../models/todo-model";
 import { OrderType } from "../@types/order-type";
+import { Types } from "mongoose";
 
 export const todoService = {
   insert: async (toDo: ToDo): Promise<ToDo | void> => {
@@ -8,6 +9,7 @@ export const todoService = {
   },
 
   listAll: async (
+    userId: string,
     sortBy?: keyof ToDo,
     order?: OrderType,
     searchString?: string
@@ -15,6 +17,7 @@ export const todoService = {
     const stages: PipelineStage[] = [];
     const orderNumber = order === "asc" ? 1 : -1;
     const match = {
+      ...{ userId: new Types.ObjectId(userId) },
       ...(searchString && {
         $or: [
           { title: { $regex: searchString, $options: "i" } },

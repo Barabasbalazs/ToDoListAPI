@@ -31,6 +31,10 @@ export const authController = {
         return next(errors.unsuccesfullLogin("incorrect password"));
       }
       const authToken = jwtService.createToken(storedUser.id);
+      const jwtToken = await jwtService.registerToken(authToken);
+      if (!jwtToken) {
+        return next(errors.unknown);
+      }
       const authResponse = {
         user: storedUser,
         authToken: authToken,
@@ -40,7 +44,25 @@ export const authController = {
       return next(errors.unknown);
     }
   },
-  logout: async (req: Request, res: Response, next: NextFunction) => {},
+  logout: async (
+    req: Request,
+    res: Response<{ authToken: string }>,
+    next: NextFunction
+  ) => {
+    try {
+      if (!req.headers || !req.headers.authorization) {
+        return next(errors.invalidParameter);
+      }
+      const bearerToken = req.headers.authorization.split(" ")[1];
+      const jwtToken = await jwtService.deregisterToken(bearerToken);
+      if (!jwtToken) {
+        return next(errors.unauthorized);
+      }
+      res.status(200).json({ authToken: jwtToken.value });
+    } catch (e) {
+      return next(errors.unknown);
+    }
+  },
   register: async (
     req: BodyRequest<User>,
     res: Response<AuthResponse>,
