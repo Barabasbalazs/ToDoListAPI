@@ -10,7 +10,6 @@ declare global {
     interface Request {
       // the authenticated user
       user?: User;
-      foo?: string;
     }
   }
 }

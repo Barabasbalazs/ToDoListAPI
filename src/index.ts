@@ -5,6 +5,7 @@ import router from "./routes";
 import { config } from "dotenv";
 import { connectToDB } from "./db-connection";
 import { handleError } from "./middleware/error-handler";
+import environMentVariables from "./utils/env-variables";
 
 config();
 
@@ -20,7 +21,7 @@ app.use("/api", router);
 
 app.use(handleError);
 
-const port = process.env.PORT || 8080;
+const port = environMentVariables.getPort();
 
 const server = http.createServer(app);
 

@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
 import jwtModel, { JwtModel } from "../models/jwt-model";
+import environMentVariables from "../utils/env-variables";
 
 export const jwtService = {
   createToken: (id: string) => {
-    const secret = process.env.SECRET || "123456789";
+    const secret = environMentVariables.getSecret();
     const authToken = jwt.sign(id, secret);
     return authToken;
   },
