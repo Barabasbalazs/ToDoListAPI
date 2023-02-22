@@ -21,14 +21,14 @@ export const authController = {
       const user = req.body;
       const storedUser = await authService.findByEmail(user.email);
       if (!storedUser) {
-        return next(errors.unsuccesfullLogin("incorrect email"));
+        return next(errors.unsuccesfullLogin("Wrong credentials"));
       }
       const isPasswordMatching = await bcrypt.compare(
         user.password,
         storedUser.password
       );
       if (!isPasswordMatching) {
-        return next(errors.unsuccesfullLogin("incorrect password"));
+        return next(errors.unsuccesfullLogin("Wrong credentials"));
       }
       const authToken = jwtService.createToken(storedUser.id);
       const jwtToken = await jwtService.registerToken(authToken);

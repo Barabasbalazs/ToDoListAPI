@@ -4,7 +4,7 @@ import environMentVariables from "../utils/env-variables";
 
 export const authService = {
   findById: async (id: string): Promise<User | null> => {
-    return await userModel.findOne({ _id: id });
+    return await userModel.findById(id);
   },
   findByEmail: async (email: string): Promise<User | null> => {
     return await userModel.findOne({ email });
