@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface ToDo extends Document {
+  userId: string;
   title: string;
   text: string;
   priority: number;
@@ -9,6 +10,7 @@ export interface ToDo extends Document {
 
 const toDoSchema = new Schema(
   {
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     title: { type: String },
     text: { type: String },
     priority: { type: Number },

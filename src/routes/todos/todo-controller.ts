@@ -1,14 +1,14 @@
 import { Response, NextFunction } from "express";
 import { ToDo } from "../../models/todo-model";
 import { todoService } from "../../services/todo-service";
-import { OrderType } from "../../types/order-type";
+import { OrderType } from "../../@types/order-type";
 import { errors } from "../../utils/errors";
 import {
   BodyRequest,
   QueryRequest,
   ParamBodyRequest,
   ParamRequest,
-} from "../../types/request-types";
+} from "../../@types/request-types";
 
 export const todoController = {
   save: async (
@@ -16,8 +16,9 @@ export const todoController = {
     res: Response<ToDo>,
     next: NextFunction
   ) => {
-    const toDo = req.body;
     try {
+      const toDo = req.body;
+      toDo.userId = req.user?.id;
       const newToDo = await todoService.insert(toDo);
       if (!newToDo) {
         return next(errors.unknown);
@@ -39,13 +40,17 @@ export const todoController = {
   ) => {
     try {
       const { sort, order, search } = req.query;
-      const toDoList = await todoService.listAll(sort, order, search);
+      const toDoList = await todoService.listAll(
+        req.user?.id,
+        sort,
+        order,
+        search
+      );
       if (!toDoList) {
         return next(errors.unknown);
       }
       res.status(200).json(toDoList);
     } catch (e) {
-      console.log(e);
       return next(errors.unknown);
     }
   },

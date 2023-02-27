@@ -20,5 +20,11 @@ export const errors = {
       "InvalidParameter",
       `Missing or invalid parameter ${param}.`
     ),
+  unsuccesfullLogin: (param: string) =>
+    new Exception(
+      401,
+      "Unauthorized",
+      `Unsuccesfull login because of: ${param}`
+    ),
 };
 /* eslint-enable */

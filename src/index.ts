@@ -5,6 +5,8 @@ import router from "./routes";
 import { config } from "dotenv";
 import { connectToDB } from "./db-connection";
 import { handleError } from "./middleware/error-handler";
+import environMentVariables from "./utils/env-variables";
+import headers from "./middleware/headers";
 
 config();
 
@@ -16,11 +18,13 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use(headers);
+
 app.use("/api", router);
 
 app.use(handleError);
 
-const port = process.env.PORT || 8080;
+const port = environMentVariables.getPort();
 
 const server = http.createServer(app);
 

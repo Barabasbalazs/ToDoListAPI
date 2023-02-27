@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const queryValidationSchema = {
-  sort: Joi.any().valid("createdAt", "text", "title", "priority").required(),
+  sort: Joi.any().valid("createdAt", "text", "title", "priority", "isResolved").required(),
   order: Joi.any().valid("asc", "desc").required(),
   search: Joi.string(),
 };
